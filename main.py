@@ -11,6 +11,13 @@ import logging
 
 bot = telebot.TeleBot(security.get_token())
 
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename="mylog.log",
+    format="%(asctime)s - %(module)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s",
+    datefmt='%Y-%m-%d %H:%M:%S',
+    )
+
 
 class LaunchedBot(object):
     launched_bot = ""
@@ -31,9 +38,18 @@ class LaunchedBot(object):
 def get_text_messages(message):
     try:
         launched_bot = LaunchedBot()
+        logging.debug(f"launched_bot = {launched_bot.get()}; "
+                      f"input text = {message.text}; "
+                      f"user: {message.from_user.id}; "
+                      f"{message.from_user.username}; "
+                      f"{message.from_user.last_name}; "
+                      f"{message.from_user.first_name}")
         print(f"launched_bot = {launched_bot.get()}")
         print(f"input text = {message.text}")
-        print(f"username = {message.from_user.username}")
+        print(f"user: {message.from_user.id}; "
+              f"{message.from_user.username}; "
+              f"{message.from_user.last_name}; "
+              f"{message.from_user.first_name}")
         print("----------------------------------------")
         if message.text == "/word":
             launched_bot.set(launched_bot="word")
