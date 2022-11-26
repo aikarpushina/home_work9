@@ -7,7 +7,7 @@ import random
 
 class Candies(object):
     candies = -1
-    my_step = True
+    correct_input = True
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -20,12 +20,6 @@ class Candies(object):
     def set(self, candies: int) -> None:
         self.candies = candies
 
-    def revert_step(self):
-        self.my_step = not self.my_step
-
-    def get_step(self):
-        return self.my_step
-
 
 def step_user(bot, message, candies):
     candy_user = message.text
@@ -34,22 +28,24 @@ def step_user(bot, message, candies):
         if 0 < candy <= 28 and candies.get() - candy >= 0:
             candies.set(candies.get() - candy)
             bot.send_message(message.from_user.id, f"На столе осталось {candies.get()} конфет.")
-            candies.revert_step()
+            candies.correct_input = True
             if candies.get() == 0:
                 bot.send_message(message.from_user.id, f"Ура! Вы победили!.")
                 candies.set(-1)
         else:
-            bot.send_message(message.from_user.id, f"Взять можно от 0 до 28 конфет, "
-                                                   f"но не болнн {candies.get()} конфет.")
+            bot.send_message(message.from_user.id, f"Взять можно от 1 до 28 конфет, "
+                                                   f"но не более {candies.get()} конфет.")
+            candies.correct_input = False
     else:
         bot.send_message(message.from_user.id, f"Введите число.")
+        candies.correct_input = False
 
 
 def step_bot(bot, message, candies):
     candy = random.randint(1, 28 if candies.get() >= 28 else candies.get())
     bot.send_message(message.from_user.id, f"Компьютер взял {candy} конфет.")
     candies.set(candies.get() - candy)
-    candies.revert_step()
+    bot.send_message(message.from_user.id, f"На столе осталось {candies.get()} конфет.")
     if candies.get() == 0:
         bot.send_message(message.from_user.id, f"Упс! Победили бот!.")
         candies.set(-1)
@@ -69,7 +65,6 @@ def candy_bot(bot, message):
         bot.send_message(message.from_user.id,
                          f"Я тебя не понимаю введи /help")
     else:
-        if candies.get_step():
-            step_user(bot=bot, message=message, candies=candies)
-        else:
+        step_user(bot=bot, message=message, candies=candies)
+        if candies.correct_input:
             step_bot(bot=bot, message=message, candies=candies)
