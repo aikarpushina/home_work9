@@ -6,6 +6,7 @@
 import security
 import telebot
 import words
+import candies
 
 bot = telebot.TeleBot(security.get_token())
 
@@ -40,9 +41,9 @@ def get_text_messages(message):
     if message.text == "/restart":
         launched_bot.set(launched_bot="")
     if launched_bot.get() == "word":
-        words.word_bot(bot, message)
+        words.word_bot(bot=bot, message=message)
     if launched_bot.get() == "candy":
-        bot.send_message(message.from_user.id, f"Упс!")
+        candies.candy_bot(bot=bot, message=message)
     if launched_bot.get() == "":
         bot.send_message(message.from_user.id,
                          f"Какого бота запустить?\n"
