@@ -23,16 +23,17 @@ class ReplacementText(object):
 def word_bot(bot, message):
     replacement_text = ReplacementText()
     if message.text[:4] == "/reg":
-        replacement_text.set(replacement_text=message.text[5:])
-        bot.send_message(message.from_user.id,
-                         f"Запомнил. Буду удалять строки с сочетанием букв '{message.text[5:]}'")
-    elif message.text == "/help":
-        bot.send_message(message.from_user.id,
-                         "Чтоб зарегестрировать сивлолы для удаления, напиши '/reg а', "
-                         "буду удалять все слова с символом 'а' в словах")
+        replace_text = message.text[5:]
+        if len(replace_text.rstrip()) > 0:
+            replacement_text.set(replacement_text=replace_text)
+            bot.send_message(message.from_user.id,
+                             f"Запомнил. Буду удалять слова с сочетанием '{replace_text}'")
+        else:
+            bot.send_message(message.from_user.id, f"Ошибка! Необходимо указать символ.")
     elif replacement_text.get() == "":
         bot.send_message(message.from_user.id,
-                         f"Я тебя не понимаю введи /help")
+                         "Чтоб зарегестрировать сивлолы для удаления, напиши '/reg а', "
+                         "буду удалять все слова с символом 'а' в словах (регистр важен)")
     else:
         text = fix_text(text=message.text, replacement_text=replacement_text.get())
         if text.strip() != "":
