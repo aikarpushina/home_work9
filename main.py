@@ -7,6 +7,7 @@ import security
 import telebot
 import words
 import candies
+import logging
 
 bot = telebot.TeleBot(security.get_token())
 
@@ -28,23 +29,34 @@ class LaunchedBot(object):
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
-    launched_bot = LaunchedBot()
-    print(f"launched_bot = {launched_bot.get()}")
-    print(f"input text = {message.text}")
-    print("----------------------------------------")
-    if message.text == "/word":
-        launched_bot.set(launched_bot="word")
-        bot.send_message(message.from_user.id, f"Бот запущен для помощи введи /help")
-    if message.text == "/candy":
-        launched_bot.set(launched_bot="candy")
-        bot.send_message(message.from_user.id, f"Бот запущен для помощи введи /help")
-    if message.text == "/restart":
-        launched_bot.set(launched_bot="")
-    if launched_bot.get() == "word":
-        words.word_bot(bot=bot, message=message)
-    if launched_bot.get() == "candy":
-        candies.candy_bot(bot=bot, message=message)
-    if launched_bot.get() == "":
+    try:
+        launched_bot = LaunchedBot()
+        print(f"launched_bot = {launched_bot.get()}")
+        print(f"input text = {message.text}")
+        print(f"username = {message.from_user.username}")
+        print("----------------------------------------")
+        if message.text == "/word":
+            launched_bot.set(launched_bot="word")
+            # bot.send_message(message.from_user.id, f"Бот запущен для помощи введи /help")
+        if message.text == "/candy":
+            launched_bot.set(launched_bot="candy")
+            # bot.send_message(message.from_user.id, f"Бот запущен для помощи введи /help")
+        if message.text == "/restart":
+            launched_bot.set(launched_bot="")
+        if launched_bot.get() == "word":
+            words.word_bot(bot=bot, message=message)
+        if launched_bot.get() == "candy":
+            candies.candy_bot(bot=bot, message=message)
+        if launched_bot.get() == "":
+            bot.send_message(message.from_user.id,
+                             f"Какого бота запустить?\n"
+                             f"Удаление слов введи /word\n"
+                             f"Игра конфеты введи /candy\n"
+                             f"Перезапуск /restart\n")
+    except BaseException:
+        logging.exception(f"An exception was thrown! username = {message.from_user.username}")
+        bot.send_message(message.from_user.id, f"Произошла ошибка, мы работаем над устронением ошибки.")
+        bot.send_message(message.from_user.id, f"Перезапуск.")
         bot.send_message(message.from_user.id,
                          f"Какого бота запустить?\n"
                          f"Удаление слов введи /word\n"

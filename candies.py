@@ -47,7 +47,7 @@ def step_bot(bot, message, candies):
     candies.set(candies.get() - candy)
     bot.send_message(message.from_user.id, f"На столе осталось {candies.get()} конфет.")
     if candies.get() == 0:
-        bot.send_message(message.from_user.id, f"Упс! Победили бот!.")
+        bot.send_message(message.from_user.id, f"Упс! Победил бот!.")
         candies.set(-1)
 
 
@@ -56,15 +56,15 @@ def candy_bot(bot, message):
     if message.text[:6] == "/start":
         candies.set(candies=int(message.text[7:]))
         bot.send_message(message.from_user.id,
-                         f"Игра началась. На столе '{message.text[7:]}' конфен. "
+                         f"Игра началась. На столе '{message.text[7:]}' конфет. "
                          f"Ваш ход первый. За ход можно взять не более 28 конфет.")
     elif message.text == "/help":
         bot.send_message(message.from_user.id,
-                         f"Для начала игры введите '/start 2021', 2021 - это сколько конфет на столе в начале игры.")
+                         f"Для начала игры введите '/start число', число - это сколько конфет на столе в начале игры.")
     elif candies.get() == -1:
         bot.send_message(message.from_user.id,
                          f"Я тебя не понимаю введи /help")
     else:
         step_user(bot=bot, message=message, candies=candies)
-        if candies.correct_input:
+        if candies.correct_input and candies.get() != -1:
             step_bot(bot=bot, message=message, candies=candies)
