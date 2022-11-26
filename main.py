@@ -53,10 +53,8 @@ def get_text_messages(message):
         print("----------------------------------------")
         if message.text == "/word":
             launched_bot.set(launched_bot="word")
-            # bot.send_message(message.from_user.id, f"Бот запущен для помощи введи /help")
         if message.text == "/candy":
             launched_bot.set(launched_bot="candy")
-            # bot.send_message(message.from_user.id, f"Бот запущен для помощи введи /help")
         if message.text == "/restart":
             launched_bot.set(launched_bot="")
         if launched_bot.get() == "word":
